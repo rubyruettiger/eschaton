@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/eschaton/game'
+
+new_game = Eschaton::Game.new
+
+puts "\n \n \n"
+
+puts "ESCHATON".center(100, '-')
+
+puts "\n \n \n "
+
+puts "c:\\Pink2\\Mathpak\\Endstat...\n "
+
+3.times do
+	sleep(1)
+	puts "\n...loading...\n"
+	sleep(1)
+end
+
+puts "\nEschaton is a thermonuclear warfare game played by the students at the Enfield Tennis Academy in Boston."
+puts "You will belong to a Combatant nation, between AMNAT, SOVWAR, REDCHI, INDPAK, IRLIBSYR, or SOUTHAF."
+puts "The point of the game is to lob a tennis ball (thermonuclear warhead) accurately at an opposing combatant's"
+puts "strategic target, of which there are many, and with their own corresponding point values."
+puts "Certain strategic targets carry higher point values but, due to their scarcity, are harder to hit."
+puts "A given Eschaton's winning team is simply that Combatant with the most favorable ratio of points for INDDIR -"
+puts "Infliction of Death, Destruction, and Incapacity of Response - to SUFDDIR - self-evident.\n "
+
+puts "Got it? (press Enter)\n "
+
+gets
+
+
+
+	loop do
+
+		puts "\nHow many rounds of Eschaton would we be playing? ('quit' or 'q' to exit)\n "
+
+		answer = gets.chomp
+
+		case answer
+
+			when /^\d+$/
+
+				new_game.control_combatant
+
+				gets
+
+				new_game.play(answer.to_i)
+
+			when 'quit', 'q'
+				puts "\n \n "
+				puts "Thanks for playing ESCHATON".center(80, ' ')
+				puts "\n \n "
+				puts "\"See yourself in your opponents. They will bring you to understand the game.".center(80, ' ')
+				puts "To accept the fact that the Game is about managed fear.".center(80, ' ')
+				puts "That its object is to send from yourself what you hope will not return.\"\n ".center(80, ' ')
+				puts ' - David Foster Wallace'.rjust(80, ' ')
+				puts "\nP.S. Allston Rules!\n "
+				break 
+
+			else
+
+				puts "\nError: Please enter a number"
+				
+			end
+
+	end
+
+

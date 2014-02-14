@@ -12,7 +12,7 @@ module Eschaton
 
 		def initialize(name: "Eschaton", beanie_status: 'Normal Game Conditions')
 			@beanie_status = beanie_status
-			@combatants = [Combatant.new(:amnat), Combatant.new(:sovwar), Combatant.new(:redchi), 
+			@combatants = [Combatant.new(:amnat), Combatant.new(:sovwar), Combatant.new(:redchi),
 										 Combatant.new(:irlibsyr), Combatant.new(:southaf), Combatant.new(:indpak)]
 			# status can change to 'cessation of hostilities'
 			# and 'utter global crisis'
@@ -24,9 +24,10 @@ module Eschaton
 		# initializes player control of random Combatant. A bit hacky, yes
 
 		def control_combatant
-			@playercombatant = @combatants.delete_at(rand(@combatants.length))
+			@playercombatant = @combatants.sample
 			puts "\nFor this game of Eschaton, you've been designated to be represent #{@playercombatant.nation}. (press Enter)\n "
 			@playercombatant.nation.prepend '*'
+			@playercombatant.is_player = true
 		end
 
 
@@ -46,32 +47,6 @@ module Eschaton
 
 			1.upto(rounds) do |r|
 				puts "\nRound #{r}\n "
-
-				puts "Which Combatant will you attack?"
-				puts @combatants.map{|x| x.nation }.sort.join(', ')
-
-				puts ' '
-
-				# This loop cycles through the @combatants array for a match between the user's input
-				# and each Combatant's nation abbreviation. If match found, we store the Combatant in
-				# the @target variable. If no match, we ask user to try again.
-
-				loop do
-					target = gets.chomp.upcase
-
-					puts ' '
-
-					if @combatants.any? { |i| i.nation == target }
-						@target = @combatants.find {|x| x.nation == target }
-						GameMaster.spasex(@playercombatant, @target)
-						sleep(2)
-						break
-					else
-						puts "Please enter the name of a Combatant:"
-						puts @combatants.map{|x| x.nation }.sort.join(', ')
-						puts ' '
-					end
-				end
 
 
 				# puts "Enter an nuclear attack sequence:"
@@ -98,24 +73,45 @@ module Eschaton
 				# 		break
 				# 	else
 				# 		puts "Error: Incorrect Attack Sequence"
-				# 	end 
+				# 	end
 				# end
 
 				# sleep(2)
 
+				@combatants.unshift(@playercombatant).uniq!
 				@combatants.each do |c|
 
 					# clone the @combatant array without the current Combatant
-					combatantsclone = @combatants.reject { |x| x.nation == c.nation }
-					combatantsclone << @playercombatant # add @playercombatant to array of attackable Combatants
-
+					combatantsclone = @combatants.reject { |x| x == c}
 					opp = combatantsclone.sample
 
+					if c.is_player == true
+						puts "Which Combatant will you attack?"
+						puts @combatants.map{|x| x.nation if x.is_player == false }.compact.sort.join(', ')
+						puts ' '
+						loop do
+							target = gets.chomp.upcase
 
-					GameMaster.spasex(c, opp)
+							puts ' '
 
-					combatantsclone.reject! { |x| x.nation == @playercombatant.nation} #removes @playercombatant again
-					sleep(2)
+							if @combatants.any? { |i| i.nation == target }
+								@target = @combatants.find {|x| x.nation == target }
+								GameMaster.spasex(c, @target)
+								sleep(2)
+								break
+							else
+								puts "Please enter the name of a Combatant:"
+								puts @combatants.map{|x| x.nation }.sort.join(', ')
+								puts ' '
+							end
+							# This loop cycles through the @combatants array for a match between the user's input
+							# and each Combatant's nation abbreviation. If match found, we store the Combatant in
+							# the @target variable. If no match, we ask user to try again.
+						end
+					else
+						GameMaster.spasex(c, opp)
+						sleep(2)
+					end
 				end
 
 				# if @combatants.all? {|c| c.defcon == 1 }
@@ -136,7 +132,7 @@ module Eschaton
 			puts "\nEndStat calculating results...\n "
 			sleep(2)
 			3.times do
-				puts "calculating...\n " 
+				puts "calculating...\n "
 				sleep(1)
 			end
 			puts " "
@@ -161,7 +157,6 @@ module Eschaton
 		end
 
 		def finalstats
-			@combatants << @playercombatant
 			accuracy_rankings = @combatants.sort {|a,b| b.accuracy <=> a.accuracy }
 			mvl = accuracy_rankings.first
 			if mvl.accuracy = 1

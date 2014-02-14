@@ -3,7 +3,7 @@ require_relative 'strategic_targets'
 module Eschaton
 
 	class Combatant
-		attr_accessor :nation, :megatonnage, :inddir, :sufddir, :accuracy, :defcon, :rad_level, :em_immunity, :population, :score
+		attr_accessor :nation, :megatonnage, :inddir, :sufddir, :accuracy, :defcon, :rad_level, :em_immunity, :population, :score, :is_player
 
 		# megatonnage =
 		# integrally regressed ratio of:
@@ -13,8 +13,8 @@ module Eschaton
 
 
 		def initialize(nation, megatonnage: 400, defcon: 5, sufddir: 0.0, inddir: 0.0,
-							   sacpop: 0, rad_level: 0, em_immunity: true, 
-							   population: 300_000_000, accuracy: 0, score: 0)
+							   sacpop: 0, rad_level: 0, em_immunity: true,
+							   population: 300_000_000, accuracy: 0, score: 0, is_player: false)
 
 			@nation = nation.to_s.upcase
 			@sufddir = sufddir #suffering of death, destruction, and incapacitation of response
@@ -28,6 +28,7 @@ module Eschaton
 			@accuracy = accuracy
 			@score = score
 			@targets_hit = Hash.new(0)
+			@is_player = is_player
 		end
 
 		def to_s
@@ -129,7 +130,7 @@ module Eschaton
 				opponent.rad_level += 100
 				opponent.population -= rand(100_000_000..200_000_000)
 				8.times do
-					GameMaster.spasex(self, opponent) 
+					GameMaster.spasex(self, opponent)
 					sleep(1)
 				end
 
@@ -167,7 +168,7 @@ module Eschaton
 		# end
 
 		# def incapacitated?
-		# 	#ratio of SUFDDIR, loss of turns 
+		# 	#ratio of SUFDDIR, loss of turns
 		# end
 
 
